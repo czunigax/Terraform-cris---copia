@@ -7,25 +7,30 @@ resource "azurerm_service_plan" "sp" {
     tags = var.tags
 }
 
+
 resource "azurerm_linux_web_app" "webappui" {
-    name = "gui-${var.name_Project}-${var.enviroment}"
-    location = var.location
-    resource_group_name = azurerm_resource_group.rg.name
-    service_plan_id = azurerm_service_plan.sp.id
+  name                = "pokeui-${var.name_Project}-${var.enviroment}"
+  location            = var.location
+  resource_group_name = azurerm_resource_group.rg.name
+  service_plan_id     = azurerm_service_plan.sp.id
 
-    site_config  {
-        always_on = false
-        application_stack {
-            docker_registry_url = "https://index.docker.io/v1/"
-            docker_image_name = "nginx:latest"
-        }
+  # Configuración clave para usar tu imagen personalizada
+  site_config {
+    always_on = false
+    application_stack {
+      docker_image_name = "acrproyecto2dv.azurecr.io/pikachu-ui:latest"
+
     }
+  }
 
-    app_settings = {
-        WEBSITE_PORT ="88"
-    }
+  # Variables críticas para Next.js
+  app_settings = {
+    WEBSITES_PORT      = "3000"  # ¡Obligatorio para Next.js!
+    
 
-  
+  }
+
+
 }
 
 resource "azurerm_linux_web_app" "webapp_admin"{
@@ -34,17 +39,18 @@ resource "azurerm_linux_web_app" "webapp_admin"{
     resource_group_name = azurerm_resource_group.rg.name
     service_plan_id = azurerm_service_plan.sp.id
 
-    site_config  {
+  
+  site_config  {
         always_on = false
         application_stack {
-            docker_registry_url = "https://index.docker.io/v1/"
-            docker_image_name = "org/admin-api:latest" #(reemplazar con la imagen de la API)
+           docker_image_name = "acrproyecto2dv.azurecr.io/proyecto-pikachu:latest"
+
         }
     }
+   app_settings = {
+    WEBSITE_PORT = "8000",  # Puerto de la API
 
-    app_settings = {
-        WEBSITE_PORT ="5000" #Puerto de la API
-    }
-    
-    tags = var.tags
+   }
+
+  tags = var.tags
 }

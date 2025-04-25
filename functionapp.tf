@@ -8,6 +8,9 @@ resource "azurerm_linux_function_app" "serverless" {
     service_plan_id           = azurerm_service_plan.sp.id
   
   site_config {
+    application_stack {
+      python_version = "3.11"
+    }
     
   }
 }
